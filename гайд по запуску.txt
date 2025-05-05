@@ -1,0 +1,24 @@
+Проверка работы
+# Проверить статус контейнеров
+docker-compose ps
+
+1. Запуск докера
+docker-compose up -d --build
+2. SQL-строка
+docker-compose exec db psql -U postgres -d fitness_db
+3. Создание БД
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    hashed_password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+4. Запуск докера с выводом состояния 
+docker-compose up --build
+
+5. Переход по ссылке http://localhost:8000/docs#/ 

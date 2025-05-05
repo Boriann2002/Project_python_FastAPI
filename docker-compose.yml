@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - SQLALCHEMY_DATABASE_URL=postgresql+asyncpg://postgres:postgrespassword@db:5432/fitness_db # Убрать кавычки!
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app  # Для разработки - монтирование текущей директории
+    command: >
+      sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  db:
+    image: postgres:13
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fitness_db"]  # Явно указываем БД
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: fitness_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
